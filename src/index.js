@@ -10,7 +10,7 @@ const IMAGE_TYPE = 'photo';
 const ORIENTATION = 'horizontal';
 const SAFESEARCH = 'true';
 const PER_PAGE = '40';
-let page = '1';
+let page = 1;
 
 const params = new URLSearchParams({
   key: API_KEY,
@@ -18,7 +18,7 @@ const params = new URLSearchParams({
   orientation: ORIENTATION,
   safesearch: SAFESEARCH,
   per_page: PER_PAGE,
-  page,
+  page: page,
 });
 
 const refs = {
@@ -31,6 +31,8 @@ const refs = {
 refs.form.addEventListener('submit', handleSubmit)
 
 async function handleSubmit(event) {
+  page = 1
+  params.set('page', page);
   event.preventDefault()
   const formData = new FormData(event.currentTarget)
   const searchTerm = formData
@@ -42,41 +44,36 @@ async function handleSubmit(event) {
       `❌ Input search request!! ❌`
     );
   }
-  getImages(searchTerm, page = 1);
+  images = await getImages(searchTerm);
+  refs.gallery.innerHTML = createGalleryMarkup(images);
   refs.loadMoreBtn.addEventListener('click', handleLoadMore);
   refs.loadMoreBtn.classList.remove('is-hidden');
 }
 
-// async function getImages(searchTerm, page = 1) {
-//     try {
-//       const { data } = await axios.get(
-//         `${BASE_URL}/?${params}&q=${searchTerm}`
-//       );
-//       refs.gallery.innerHTML = createGalleryMarkup(data.hits);
-//     } catch (error) {
-//       Notiflix.Notify.failure(
-//         `❌ Sorry, there is no images matching your search querry. Please try again. ❌`
-//       );
-//       console.log(error);
-//     }
-//   };
 
-function handleLoadMore() {
+async function handleLoadMore() {
+  refs.loadMoreBtn.classList.add('is-hidden');
   const searchTerm = document.querySelector('input').value
     .trim()
-  console.log(searchTerm)
   page += 1
-  const data = getImages(searchTerm, page) 
-  console.log(data)
-  refs.gallery.insertAdjacentHTML('beforeend', createGalleryMarkup(data));
-}
+  params.set('page', page)
+  images = await getImages(searchTerm, page);
+  
+  nextpage = createGalleryMarkup(images);
+  refs.gallery.insertAdjacentHTML('beforeend', nextpage);
+
+  if (nextpage != '') {
+    refs.loadMoreBtn.classList.remove('is-hidden');
+  }
+  
+  }
   
 async function getImages(searchTerm, page = 1) {
     try {
       const { data } = await axios.get(
         `${BASE_URL}/?${params}&q=${searchTerm}`
       );
-      refs.gallery.innerHTML = createGalleryMarkup(data.hits);
+      return data.hits;
     } catch (error) {
       Notiflix.Notify.failure(
         `❌ Sorry, there is no images matching your search querry. Please try again. ❌`
@@ -84,34 +81,3 @@ async function getImages(searchTerm, page = 1) {
       console.log(error);
     }
   };
-
-
-//   try {
-//     const images = await getImages(searchTerm)
-    
-//     console.log(images);
-//     refs.gallery.innerHTML = createGalleryMarkup(images);
-//     if (createGalleryMarkup(images) === "") {
-//       Notiflix.Notify.failure(
-//         `❌ Sorry, there is no images matching your search querry. Please try again. ❌`
-//       );
-//     }
-//   } catch (error) {
-//     Notiflix.Notify.failure(`❌ Sorry, there is no images matching your search querry. Please try again. ❌`);
-//     console.log(error)
-//   }
-//   finally {
-//     refs.loadMoreBtn.classList.remove('is-hidden');
-//     refs.loadMoreBtn.addEventListener('click', handleLoadMore);
-//   }
-  
-// }
-
-// let page = 1;
-// function handleLoadMore() {
-//   page += 1;
-//   const images = getImages(searchTerm, page);
-//   console.log(images);
-//   refs.gallery.insertAdjacentHTML('beforeend', createGalleryMarkup(images));
-  
-// }
