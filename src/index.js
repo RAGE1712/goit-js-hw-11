@@ -45,9 +45,12 @@ async function handleSubmit(event) {
     );
   }
   images = await getImages(searchTerm);
-  refs.gallery.innerHTML = createGalleryMarkup(images);
+  totalHits = images.totalHits;
+  console.log(images.hits);
+  refs.gallery.innerHTML = createGalleryMarkup(images.hits);
   refs.loadMoreBtn.addEventListener('click', handleLoadMore);
   refs.loadMoreBtn.classList.remove('is-hidden');
+  Notiflix.Notify.success(`Hooray! We found ${totalHits} images. `);
 }
 
 
@@ -59,11 +62,15 @@ async function handleLoadMore() {
   params.set('page', page)
   images = await getImages(searchTerm, page);
   
-  nextpage = createGalleryMarkup(images);
+  nextpage = createGalleryMarkup(images.hits);
   refs.gallery.insertAdjacentHTML('beforeend', nextpage);
 
   if (nextpage != '') {
     refs.loadMoreBtn.classList.remove('is-hidden');
+  } else {
+    Notiflix.Notify.failure(
+      `We're sorry, but you've reached the end of search results.`
+    );
   }
   
   }
@@ -73,7 +80,7 @@ async function getImages(searchTerm, page = 1) {
       const { data } = await axios.get(
         `${BASE_URL}/?${params}&q=${searchTerm}`
       );
-      return data.hits;
+      return data;
     } catch (error) {
       Notiflix.Notify.failure(
         `❌ Sorry, there is no images matching your search querry. Please try again. ❌`
