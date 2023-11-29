@@ -44,7 +44,7 @@ async function handleSubmit(event) {
   
   if (searchTerm === '') {
     Notiflix.Notify.failure(
-      `❌ Input search request!! ❌`
+      `❌ Input search request!!! ❌`
     );
   } else{
     images = await getImages(searchTerm);
