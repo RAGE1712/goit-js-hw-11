@@ -23,6 +23,7 @@ const params = new URLSearchParams({
 });
 let endOfResultsShown = false;
 let images;
+let totalHits;
 
 const refs = {
   form: document.querySelector('.search-form'),
