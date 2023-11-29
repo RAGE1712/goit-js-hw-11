@@ -12,12 +12,12 @@ export function createGalleryMarkup(arr) {
       }) => `
         <div class="photo-card">
         <div class="image-container">
+        <a class="gallery__link" href="${largeImageURL}">
           <img
             src="${webformatURL}"
             alt="${tags}"
-            data-source="${largeImageURL}"
             loading="lazy"
-          />
+          /></a>
         </div>
         <div class="info">
           <p class="info-item">

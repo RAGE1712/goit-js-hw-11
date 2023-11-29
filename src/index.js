@@ -3,6 +3,8 @@ import 'notiflix/dist/notiflix-aio-3.2.6.min.js';
 // import { getImages } from './partials/images-api'
 import { createGalleryMarkup } from './partials/gallery-markup';
 import axios from 'axios';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const BASE_URL = 'https://pixabay.com/api';
 const API_KEY = '40932900-188c1692f3ee2d04fe74a00db';
@@ -88,3 +90,6 @@ async function getImages(searchTerm, page = 1) {
       console.log(error);
     }
   };
+
+  // new SimpleLightbox('.image-container a', {
+  // });
