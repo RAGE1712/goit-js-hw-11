@@ -22,6 +22,7 @@ const params = new URLSearchParams({
   page: page,
 });
 let endOfResultsShown = false;
+let images;
 
 const refs = {
   form: document.querySelector('.search-form'),
