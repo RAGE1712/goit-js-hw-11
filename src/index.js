@@ -53,9 +53,9 @@ async function handleSubmit(event) {
     totalHits = images.totalHits;
     // console.log(images.hits);
     refs.gallery.innerHTML = createGalleryMarkup(images.hits);
-    smoothScroll();
     if (totalHits !== 0) {
       Notiflix.Notify.success(`Hooray! We found ${totalHits} images. `);
+      smoothScroll();
     } else {
       Notiflix.Notify.failure(
         `❌ Sorry, there is no images matching your search querry. Please try another request. ❌`
@@ -64,6 +64,7 @@ async function handleSubmit(event) {
   }
   lightbox.refresh()
   endOfResultsShown = false;
+  
 }
 
 
