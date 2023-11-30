@@ -24,6 +24,7 @@ const params = new URLSearchParams({
 let endOfResultsShown = false;
 let images;
 let totalHits;
+let loadingMore = false;
 
 const refs = {
   form: document.querySelector('.search-form'),
@@ -69,34 +70,38 @@ async function handleSubmit(event) {
 
 
 async function handleLoadMore() {
-const searchTerm = document.querySelector('input').value.trim();
-page += 1;
-params.set('page', page);
+  if (!endOfResultsShown && !loadingMore) {
+    loadingMore = true;
+    const searchTerm = document.querySelector('input').value.trim();
+    page += 1;
+    params.set('page', page);
 
-try {
-  const { data } = await axios.get(`${BASE_URL}/?${params}&q=${searchTerm}`);
-
-  if (data.hits.length > 0) {
-    const nextpage = createGalleryMarkup(data.hits);
-    refs.gallery.insertAdjacentHTML('beforeend', nextpage);
-    lightbox.refresh();
-    smoothScroll();
-  } else {
-    if (!endOfResultsShown) {
-      Notiflix.Notify.info(
-        `We're sorry, but you've reached the end of search results.`
+    try {
+      const { data } = await axios.get(
+        `${BASE_URL}/?${params}&q=${searchTerm}`
       );
-      endOfResultsShown = true;
+
+      if (data.hits.length > 0) {
+        const nextpage = createGalleryMarkup(data.hits);
+        refs.gallery.insertAdjacentHTML('beforeend', nextpage);
+        lightbox.refresh();
+        smoothScroll();
+      } else {
+        Notiflix.Notify.info(
+          `We're sorry, but you've reached the end of search results.`
+        );
+        endOfResultsShown = true;
+      }
+    } catch (error) {
+      Notiflix.Notify.failure(
+        `❌ Failed to load more images. Please try later. ❌`
+      );
+      console.error(error);
+    } finally {
+      loadingMore = false;
     }
   }
-} catch (error) {
-  Notiflix.Notify.failure(
-    `❌ Failed to load more images. Please try later. ❌`
-  );
-  console.error(error);
 }
-  }
-  
 async function getImages(searchTerm, page = 1) {
     try {
       const { data } = await axios.get(
